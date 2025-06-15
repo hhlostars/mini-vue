@@ -17,7 +17,7 @@ export interface Link {
 }
 
 export function link(dep: Dependency, sub: Subscriber) {
-  const currentDep = sub.depsTail
+  const currentDep = sub?.depsTail
   const nextDep = undefined
   return linkNewDep(dep, sub, nextDep, currentDep)
 }

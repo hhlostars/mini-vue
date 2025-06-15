@@ -16,7 +16,11 @@ export class ReactiveEffect<T = any> {
 
   run(): T {
     setActiveSub(this)
-    return this.fn()
+    try {
+      return this.fn()
+    } finally {
+      setActiveSub(undefined)
+    }
   }
 }
 

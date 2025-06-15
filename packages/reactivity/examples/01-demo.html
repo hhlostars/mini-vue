@@ -11,13 +11,15 @@
         import { ref, effect } from "../dist/reactivity.esm.js";
 
         const num = ref(1);
-        effect(() => {
+        const runner = effect(() => {
           console.log(num.value);
         });
 
         setTimeout(() => {
           num.value = 2;
         }, 1000);
+
+        console.log(runner)
     </script>
   </body>
 </html>

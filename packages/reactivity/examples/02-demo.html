@@ -1,0 +1,33 @@
+01-demo.html<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+        body {
+            padding: 150px;
+        }
+    </style>
+</head>
+<body>
+<button id="btn">按钮</button>
+<script type="module">
+    // import { effect, ref } from "../../../node_modules/vue/dist/vue.esm-browser.js";
+    import { ref, effect } from '../dist/reactivity.esm.js'
+
+    const flag = ref(true)
+    const count = ref(0)
+    const e = effect(() => {
+        flag.value
+        count.value
+        console.count('effect')
+    })
+
+    console.dir(e)
+    // 依赖收集会重复 每次执行的时候都会再收集一遍依赖
+    btn.onclick = () => {
+        count.value++
+    }
+</script>
+</body>
+</html>

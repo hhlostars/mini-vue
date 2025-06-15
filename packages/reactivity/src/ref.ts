@@ -35,7 +35,9 @@ function isRef(value: any) {
 }
 
 function trackRef(dep: Dependency) {
-  link(dep, activeSub)
+  if (activeSub !== undefined) {
+    link(dep, activeSub)
+  }
 }
 
 function triggerRef(ref: RefImpl) {
