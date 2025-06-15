@@ -1,4 +1,4 @@
-import { Link, Subscriber } from './system'
+import { Link, startTracking, Subscriber } from './system'
 
 export class ReactiveEffect<T = any> {
   deps: Link | undefined = undefined
@@ -10,16 +10,19 @@ export class ReactiveEffect<T = any> {
     this.scheduler()
   }
 
+  // 设置schedule时 运行设置的方法 默认执行run
   scheduler(): void {
     this.run()
   }
 
   run(): T {
+    const prevSub = activeSub
     setActiveSub(this)
+    startTracking(this)
     try {
       return this.fn()
     } finally {
-      setActiveSub(undefined)
+      setActiveSub(prevSub)
     }
   }
 }
