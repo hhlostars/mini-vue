@@ -6,6 +6,8 @@ export interface Dependency {
 export interface Subscriber {
   deps: Link | undefined
   depsTail: Link | undefined
+  // 标记
+  flags: SubscriberFlags
 }
 
 export interface Link {
@@ -14,6 +16,16 @@ export interface Link {
   preSub: Link | undefined
   nextSub: Link | undefined
   nextDep: Link | undefined
+}
+
+export const enum SubscriberFlags {
+  Computed = 1 << 0,
+  Effect = 1 << 1,
+  Tracking = 1 << 2,
+  Recursed = 1 << 4,
+  Dirty = 1 << 5,
+  PendingComputed = 1 << 6,
+  Propagated = Dirty | PendingComputed,
 }
 
 export function link(dep: Dependency, sub: Subscriber) {
@@ -80,7 +92,10 @@ export function propagate(current: Link): void {
   let link = current
   let effects = []
   while (link) {
-    effects.push(link.sub)
+    const sub = link.sub
+    if (!(sub.flags & SubscriberFlags.Tracking)) {
+      effects.push(link.sub)
+    }
     link = link.nextSub
   }
   effects.forEach(effect => effect.notify())
@@ -88,6 +103,11 @@ export function propagate(current: Link): void {
 
 export function startTracking(sub: Subscriber): void {
   sub.depsTail = undefined
+  // 清除 Recursed 和 Propagated 标志位。
+  // 设置 Tracking 标志位
+  sub.flags =
+    (sub.flags & ~(SubscriberFlags.Recursed | SubscriberFlags.Propagated)) |
+    SubscriberFlags.Tracking
 }
 
 export function endTracking(sub: Subscriber): void {
@@ -105,6 +125,7 @@ export function endTracking(sub: Subscriber): void {
     clearTacking(sub.deps)
     sub.deps = undefined
   }
+  sub.flags &= ~SubscriberFlags.Tracking
 }
 
 function clearTacking(link: Link) {

@@ -1,8 +1,15 @@
-import { endTracking, Link, startTracking, Subscriber } from './system'
+import {
+  endTracking,
+  Link,
+  startTracking,
+  Subscriber,
+  SubscriberFlags,
+} from './system'
 
 export class ReactiveEffect<T = any> {
   deps: Link | undefined = undefined
   depsTail: Link | undefined = undefined
+  flags: number = SubscriberFlags.Effect
 
   constructor(public fn: () => T) {}
 
