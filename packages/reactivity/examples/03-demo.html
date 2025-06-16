@@ -22,12 +22,24 @@
     const flag = ref(true)
     const name = ref('远方os')
     const age = ref(18)
+    let num = 1
 
+    // 解决问题依赖重复收集
+    // effect(() => {
+    //     console.log('effect run')
+    //     if (flag.value) {
+    //         app.innerHTML = name.value
+    //     } else {
+    //         app.innerHTML = name.value
+    //     }
+    // })
+
+    // 再执行一次后收集的依赖都会断开
     effect(() => {
-        if (flag.value) {
-            app.innerHTML = name.value
-        } else {
-            app.innerHTML = age.value
+        console.log('num effect')
+        if (num) {
+            num--
+            console.log(name.value, age.value, flag.value)
         }
     })
 
@@ -42,6 +54,7 @@
     ageBtn.onclick = () => {
         age.value++
     }
+
 </script>
 </body>
 </html>

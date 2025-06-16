@@ -1,4 +1,4 @@
-import { Link, startTracking, Subscriber } from './system'
+import { endTracking, Link, startTracking, Subscriber } from './system'
 
 export class ReactiveEffect<T = any> {
   deps: Link | undefined = undefined
@@ -23,6 +23,7 @@ export class ReactiveEffect<T = any> {
       return this.fn()
     } finally {
       setActiveSub(prevSub)
+      endTracking(this)
     }
   }
 }

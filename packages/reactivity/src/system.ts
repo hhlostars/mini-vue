@@ -29,7 +29,9 @@ export function link(dep: Dependency, sub: Subscriber) {
    *      a. 遇到effect中第一个dep时 currentDep 为空
    *      b. 将nextDep指向sub的头结点
    *      c. 此时nextDep存在 nextDep的dep 与 此时link中的dep相等
-   *      d. 处理后续的dep时 currentDep存在 nextDep则为顺序下一个节点
+   *      d. 将sub的尾节点指向nextDep
+   *      e. 处理后续的dep currentDep存在 nextDep指向currentDep.nextDep
+   *      f. 若nextDep.dep === dep 则是重复依赖
    */
   const nextDep = currentDep !== undefined ? currentDep.nextDep : sub.deps
   // nextDep 不为undefined 则是说明
@@ -44,12 +46,12 @@ function linkNewDep(
   dep: Dependency,
   sub: Subscriber,
   nextDep: Link | undefined,
-  currentDep: Link | undefined,
+  depsTail: Link | undefined,
 ) {
-  const newLink = {
+  const newLink: Link = {
     dep,
     sub,
-    preSub: currentDep,
+    preSub: undefined,
     nextSub: undefined,
     nextDep,
   }
@@ -63,10 +65,10 @@ function linkNewDep(
   }
 
   // 将 newDep 插入到sub的双向链表中
-  if (sub.deps === undefined) {
+  if (depsTail === undefined) {
     sub.deps = newLink
   } else {
-    sub.depsTail.nextDep = newLink
+    depsTail.nextDep = newLink
   }
   dep.subsTail = newLink
   sub.depsTail = newLink
@@ -86,4 +88,40 @@ export function propagate(current: Link): void {
 
 export function startTracking(sub: Subscriber): void {
   sub.depsTail = undefined
+}
+
+export function endTracking(sub: Subscriber): void {
+  const depsTail = sub.depsTail
+  if (depsTail !== undefined) {
+    const nextDep = depsTail.nextDep
+    if (nextDep !== undefined) {
+      // 尾节点还有nextDep存在说明 需要清理无效的依赖
+      clearTacking(nextDep)
+      depsTail.nextDep = undefined
+    }
+  } else if (sub.deps !== undefined) {
+    // 清空所有依赖
+    // nextDep为undefined 说明没有收集到依赖
+    clearTacking(sub.deps)
+    sub.deps = undefined
+  }
+}
+
+function clearTacking(link: Link) {
+  do {
+    const { dep, nextDep, nextSub, preSub } = link
+    // 处理presub
+    if (preSub !== undefined) {
+      preSub.nextSub = nextSub
+    } else {
+      dep.subs = nextSub
+    }
+    // 处理nextSub
+    if (nextSub !== undefined) {
+      nextSub.preSub = preSub
+    } else {
+      dep.subsTail = preSub
+    }
+    link = nextDep!
+  } while (link !== undefined)
 }
