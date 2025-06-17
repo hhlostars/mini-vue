@@ -2,13 +2,14 @@ import { ReactiveFlags } from './constants'
 import { Dependency, link, Link, propagate } from './system'
 import { hasChanged } from '@vue/shared'
 import { activeSub } from './effect'
+import { toReactive } from './reactive'
 
 class RefImpl<T = any> implements Dependency {
   _value: T
   subs: Link | undefined = undefined
   subsTail: Link | undefined = undefined
-  constructor(value: T) {
-    this._value = value
+  constructor(value: T, isShallow: boolean) {
+    this._value = isShallow ? value : toReactive(value)
     this[ReactiveFlags.IS_REF] = true
   }
 
@@ -30,7 +31,7 @@ class RefImpl<T = any> implements Dependency {
   }
 }
 
-function isRef(value: any) {
+export function isRef(value: any) {
   return value && value[ReactiveFlags.IS_REF]
 }
 
@@ -47,14 +48,13 @@ function triggerRef(ref: RefImpl) {
   }
 }
 
-function createRef(value) {
-  if (isRef(value)) {
-    return value
-  } else {
-    return new RefImpl(value)
+function createRef(rawValue: unknown, shallow: boolean) {
+  if (isRef(rawValue)) {
+    return rawValue
   }
+  return new RefImpl(rawValue, shallow)
 }
 
-export function ref(value) {
-  return createRef(value)
+export function ref(value?: unknown) {
+  return createRef(value, false)
 }
