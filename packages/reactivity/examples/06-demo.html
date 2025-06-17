@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>数组响应式</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      // import {
+      //   effect,
+      //   ref,
+      //   reactive,
+      // } from '../../../node_modules/vue/dist/vue.esm-browser.js'
+
+      import { ref, effect, reactive } from '../dist/reactivity.esm.js'
+      const state = reactive([1, 2, 3])
+      // 更新数组length 会引起追踪数据的修改
+      effect(() => {
+        // console.log(state[2])
+        console.log('effect', state.length)
+      })
+      // 数组隐式变化 push 触发的set中的key是push的下标 pop是length
+      setTimeout(() => {
+        // state.length = 1
+        // 隐式更新length
+        state.pop()
+      }, 1000)
+    </script>
+  </body>
+</html>

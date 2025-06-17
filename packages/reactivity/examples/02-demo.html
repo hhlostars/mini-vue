@@ -1,57 +1,58 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <title>Title</title>
+    <title>effect相关</title>
     <style>
-        body {
-            padding: 150px;
-        }
+      body {
+        padding: 150px;
+      }
     </style>
-</head>
-<body>
-<button id="btn">按钮</button>
-<script type="module">
-    // import { effect, ref } from "../../../node_modules/vue/dist/vue.esm-browser.js";
-    import { ref, effect } from '../dist/reactivity.esm.js'
+  </head>
+  <body>
+    <button id="btn">按钮</button>
+    <script type="module">
+      // import { effect, ref } from "../../../node_modules/vue/dist/vue.esm-browser.js";
+      import { ref, effect } from '../dist/reactivity.esm.js'
 
-    const flag = ref(true)
-    const count = ref(0)
-    const count1 = ref(0)
-    const count2 = ref(0)
-    // 问题一 effect嵌套
-    // effect(() => {
-    //     effect(() => {
-    //         console.log('嵌套的effect', count1.value)
-    //     })
-    //     console.log('外部的effect', count2.value)
-    // })
+      const flag = ref(true)
+      const count = ref(0)
+      const count1 = ref(0)
+      const count2 = ref(0)
+      // 问题一 effect嵌套
+      // effect(() => {
+      //     effect(() => {
+      //         console.log('嵌套的effect', count1.value)
+      //     })
+      //     console.log('外部的effect', count2.value)
+      // })
 
-    // 问题二
-    // effect(() => {
-    //     console.log('effect', count1.value)
-    // }, {
-    //     scheduler: () => {
-    //         console.log('scheduler执行')
-    //     }
-    // })
+      // 问题二
+      // effect(() => {
+      //     console.log('effect', count1.value)
+      // }, {
+      //     scheduler: () => {
+      //         console.log('scheduler执行')
+      //     }
+      // })
 
-    setTimeout(() => {
+      setTimeout(() => {
         count1.value = 123
-    }, 1000)
+      }, 1000)
 
-    // 问题三 重复收集
-    const e = effect(() => {
+      // 问题三 重复收集
+      const e = effect(() => {
         flag.value
         count.value
         console.count('effect')
-    })
+      })
 
-    console.dir(e)
-    // 依赖收集会重复 每次执行的时候都会再收集一遍依赖
-    btn.onclick = () => {
+      console.dir(e)
+      // 依赖收集会重复 每次执行的时候都会再收集一遍依赖
+      btn.onclick = () => {
         count.value++
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
+  05-demo.html
 </html>

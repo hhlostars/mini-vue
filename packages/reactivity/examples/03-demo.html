@@ -1,60 +1,59 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <title>Title</title>
+    <title>重复收集|分支切换</title>
     <style>
-        body {
-            padding: 150px;
-        }
+      body {
+        padding: 150px;
+      }
     </style>
-</head>
-<body>
-<div id="app"></div>
-<button id="flagBtn">update flag</button>
-<button id="nameBtn">update name</button>
-<button id="ageBtn">update age</button>
-<script type="module">
-    // import { effect, ref } from "../../../node_modules/vue/dist/vue.esm-browser.js";
+  </head>
+  <body>
+    <div id="app"></div>
+    <button id="flagBtn">update flag</button>
+    <button id="nameBtn">update name</button>
+    <button id="ageBtn">update age</button>
+    <script type="module">
+      // import { effect, ref } from "../../../node_modules/vue/dist/vue.esm-browser.js";
 
-    import { ref, effect } from '../dist/reactivity.esm.js'
+      import { ref, effect } from '../dist/reactivity.esm.js'
 
-    const flag = ref(true)
-    const name = ref('远方os')
-    const age = ref(18)
-    let num = 1
+      const flag = ref(true)
+      const name = ref('远方os')
+      const age = ref(18)
+      let num = 1
 
-    // 解决问题依赖重复收集
-    // effect(() => {
-    //     console.log('effect run')
-    //     if (flag.value) {
-    //         app.innerHTML = name.value
-    //     } else {
-    //         app.innerHTML = name.value
-    //     }
-    // })
+      // 解决问题依赖重复收集
+      // effect(() => {
+      //     console.log('effect run')
+      //     if (flag.value) {
+      //         app.innerHTML = name.value
+      //     } else {
+      //         app.innerHTML = name.value
+      //     }
+      // })
 
-    // 再执行一次后收集的依赖都会断开
-    effect(() => {
+      // 再执行一次后收集的依赖都会断开
+      effect(() => {
         console.log('num effect')
         if (num) {
-            num--
-            console.log(name.value, age.value, flag.value)
+          num--
+          console.log(name.value, age.value, flag.value)
         }
-    })
+      })
 
-    flagBtn.onclick = () => {
+      flagBtn.onclick = () => {
         flag.value = !flag.value
-    }
+      }
 
-    nameBtn.onclick = () => {
+      nameBtn.onclick = () => {
         name.value = name.value + Math.random()
-    }
+      }
 
-    ageBtn.onclick = () => {
+      ageBtn.onclick = () => {
         age.value++
-    }
-
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>reactive</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      // import { effect, ref, reactive } from "../../../node_modules/vue/dist/vue.esm-browser.js";
+
+      import { ref, effect, reactive } from '../dist/reactivity.esm.js'
+      // const state = reactive({
+      //     a: 0,
+      //     get count() {
+      //         return this.a
+      //     }
+      // })
+      //
+      // effect(() => {
+      //     // console.log(state.a)
+      //     console.log(state.count)
+      // })
+      //
+      // setTimeout(() => {
+      //     state.a = 1
+      // }, 1000)
+      //
+      // const obj = { a: 0 }
+      // const reactive1 = reactive(obj)
+      // const reactive2 = reactive(obj)
+      // console.log('1 === 2', reactive1 === reactive2)
+
+      /**
+       * 如果refData.a是一个ref 则不需要通过.value返回 更新refData.a 原始的ref也会跟着变化
+       *
+       */
+      const a = ref(1)
+      const refData = reactive({
+        a,
+      })
+      effect(() => {
+        // console.log('ref在reactive中', refData.a)
+        console.log('ref', a.value)
+      })
+      setTimeout(() => {
+        // refData.a = 2
+        // console.log('ref', a.value)
+        refData.a = 123
+        console.log('reactive', refData.a)
+      }, 1000)
+    </script>
+  </body>
+</html>
