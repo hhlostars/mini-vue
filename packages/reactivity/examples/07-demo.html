@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ref相关api</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      // import {
+      //   effect,
+      //   ref,
+      //   unref,
+      //   reactive,
+      //   toRef,
+      //   toRefs,
+      // } from '../../../node_modules/vue/dist/vue.esm-browser.js'
+
+      import {
+        effect,
+        ref,
+        unref,
+        reactive,
+        toRef,
+        toRefs,
+      } from '../dist/reactivity.esm.js'
+      /**
+       * 1. toRef
+       * 2. toRefs
+       * 3. unref
+       * 4. proxyRefs
+       */
+      const state = reactive({
+        count: 1,
+        name: 'zhang',
+      })
+      const stateRefs = toRefs(state)
+      console.log(stateRefs)
+      const num = ref(1)
+      // 结构后再赋值 不会触发proxy的set操作
+      // let { name } = state
+      let name = toRef(state, 'name')
+      effect(() => {
+        // console.log('effect', name.value)
+        console.log('torefs', stateRefs.name.value)
+      })
+      setTimeout(() => {
+        name.value = 'hu'
+        console.log('name.value, state.name', name.value, state.name)
+        console.log(unref(num))
+      }, 1000)
+    </script>
+  </body>
+</html>
