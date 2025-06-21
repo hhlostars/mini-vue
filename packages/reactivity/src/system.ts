@@ -1,3 +1,5 @@
+import type { ComputedRefImpl as Computed } from './computed.js'
+
 export interface Dependency {
   subs: Link | undefined
   subsTail: Link | undefined
@@ -11,8 +13,8 @@ export interface Subscriber {
 }
 
 export interface Link {
-  dep: Dependency
-  sub: Subscriber
+  dep: Dependency | Computed
+  sub: Subscriber | Computed
   preSub: Link | undefined
   nextSub: Link | undefined
   nextDep: Link | undefined
@@ -93,10 +95,15 @@ export function propagate(current: Link): void {
   let effects = []
   while (link) {
     const sub = link.sub
-    if (!(sub.flags & SubscriberFlags.Tracking)) {
+    const subFlags = sub.flags
+    if (subFlags & SubscriberFlags.Computed) {
+      // 此时sub是computed 需要通知computed的subs去更新 并将Dirty置为1代表再get computed值时需要重新获取
+      sub.flags = subFlags | SubscriberFlags.Dirty
+      link = (sub as Dependency).subs
+    } else if (!(sub.flags & SubscriberFlags.Tracking)) {
       effects.push(link.sub)
+      link = link.nextSub
     }
-    link = link.nextSub
   }
   effects.forEach(effect => effect.notify())
 }
@@ -104,6 +111,8 @@ export function propagate(current: Link): void {
 export function startTracking(sub: Subscriber): void {
   sub.depsTail = undefined
   // 清除 Recursed 和 Propagated 标志位。
+  // Propagated 中有Dirty PendingComputed标记位置
+  // 开始追踪时 dirty 置为false
   // 设置 Tracking 标志位
   sub.flags =
     (sub.flags & ~(SubscriberFlags.Recursed | SubscriberFlags.Propagated)) |
