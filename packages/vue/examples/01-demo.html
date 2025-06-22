@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>runtime</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      import {
+        h,
+        render,
+        createRenderer,
+      } from '../../../node_modules/vue/dist/vue.esm-browser.js'
+      import { renderOptions } from '../dist/vue.esm.js'
+
+      // const vnode = h('div', { class: 'container' }, 'hello world')
+      // const vnode = h('div', { style: { color: 'red' } }, 'hello world')
+      // const vnode = h(
+      //   'div',
+      //   {
+      //     onClick: () => {
+      //       console.log('click')
+      //     },
+      //   },
+      //   'hello world',
+      // )
+      const vnode = h(
+        'div',
+        {
+          name: 123,
+        },
+        'hello world',
+      )
+      const renderer = createRenderer(renderOptions)
+      renderer.render(vnode, document.getElementById('app'))
+
+      // const vnode2 = h('div', {}, 'hello world')
+      // const vnode2 = h('div', { style: { background: 'green' } }, 'hello world')
+      // const vnode2 = h(
+      //   'div',
+      //   {
+      //     onClick: () => {
+      //       console.log('更新')
+      //     },
+      //   },
+      //   'hello world',
+      // )
+      const vnode2 = h(
+        'div',
+        {
+          name: 456,
+        },
+        'hello world',
+      )
+      setTimeout(() => {
+        renderer.render(vnode2, document.getElementById('app'))
+      }, 1000)
+    </script>
+  </body>
+</html>
