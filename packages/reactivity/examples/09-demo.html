@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>watch</title>
+    <style>
+      body {
+        padding: 150px;
+      }
+      #app,
+      #dv {
+        width: 100px;
+        height: 100px;
+        background: red;
+      }
+      #dv {
+        background: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="dv"></div>
+    <button id="btn">按钮</button>
+    <script type="module">
+      // import {
+      //   reactive,
+      //   effect,
+      //   watch,
+      //   ref,
+      // } from '../../../node_modules/vue/dist/vue.esm-browser.prod.js'
+      import { ref, reactive, watch } from '../dist/reactivity.esm.js'
+
+      // const count = ref(0)
+      // watch(
+      //   count,
+      //   (newVal, oldVal) => {
+      //     console.log('change', newVal, oldVal)
+      //   },
+      //   {
+      //     immediate: true,
+      //   },
+      // )
+      // setTimeout(() => {
+      //   count.value = 2
+      // }, 1000)
+
+      // const obj = ref({
+      //   a: {
+      //     b: {
+      //       c: 1,
+      //     },
+      //   },
+      //   d: 123,
+      // })
+      // const stop = watch(
+      //   obj,
+      //   // () => obj.a.b.c,
+      //   (newVal, oldVal) => {
+      //     console.log('change', newVal, oldVal)
+      //   },
+      //   {
+      //     deep: true,
+      //   },
+      // )
+      // stop()
+      // setTimeout(() => {
+      //   // obj.a.b.c = 2
+      //   obj.value.d = 2
+      // }, 1000)
+
+      const flag = ref(true)
+
+      watch(
+        flag,
+        (newValue, oldValue, onCleanup) => {
+          const dom = newValue ? app : dv
+          function handler() {
+            console.log(newValue ? '点击了 app' : '点击了 dv')
+          }
+          dom.addEventListener('click', handler)
+          onCleanup(() => {
+            dom.removeEventListener('click', handler)
+          })
+        },
+        {
+          immediate: true,
+        },
+      )
+
+      btn.onclick = () => {
+        flag.value = !flag.value
+      }
+    </script>
+  </body>
+</html>

@@ -32,3 +32,7 @@ export function toReactive(value: any) {
   }
   return value
 }
+
+export function isReactive(value: unknown) {
+  return !!(value && value[ReactiveFlags.IS_REACTIVE])
+}

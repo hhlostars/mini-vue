@@ -6,12 +6,24 @@ import {
   SubscriberFlags,
 } from './system'
 
+export enum EffectFlags {
+  /**
+   * ReactiveEffect only
+   */
+  STOP = 1 << 10,
+}
+
 export class ReactiveEffect<T = any> {
   deps: Link | undefined = undefined
   depsTail: Link | undefined = undefined
   flags: number = SubscriberFlags.Effect
 
   constructor(public fn: () => T) {}
+
+  // 当前effect状态
+  get active(): boolean {
+    return !(this.flags & EffectFlags.STOP)
+  }
 
   notify(): void {
     this.scheduler()
@@ -31,6 +43,16 @@ export class ReactiveEffect<T = any> {
     } finally {
       setActiveSub(prevSub)
       endTracking(this)
+    }
+  }
+
+  stop() {
+    if (this.active) {
+      startTracking(this)
+      endTracking(this)
+      // cleanupEffect(this)
+      // this.onStop && this.onStop()
+      this.flags |= EffectFlags.STOP
     }
   }
 }

@@ -4,6 +4,11 @@ import { hasChanged, isArray, isObject } from '@vue/shared'
 import { activeSub } from './effect'
 import { toReactive } from './reactive'
 
+export interface Ref<T = any, S = T> {
+  get value(): T
+  set value(_: S)
+}
+
 class RefImpl<T = any> implements Dependency {
   _value: T
   subs: Link | undefined = undefined
@@ -47,7 +52,7 @@ class ObjectRefImpl {
   }
 }
 
-export function isRef(value: any) {
+export function isRef(value: any): value is Ref {
   return value && value[ReactiveFlags.IS_REF]
 }
 
