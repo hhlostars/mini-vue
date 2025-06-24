@@ -17,14 +17,20 @@
         h('p', { key: 'a' }, 'a'),
         h('p', { key: 'b' }, 'b'),
         h('p', { key: 'c' }, 'c'),
+        h('p', { key: 'd' }, 'd'),
+        h('p', { key: 'e' }, 'e'),
+        h('p', { key: 'f' }, 'f'),
       ])
       // renderer
 
       const vnode2 = h('div', [
-        h('p', { key: 'a' }, 'a'),
-        h('p', { key: 'd' }, 'd'),
-        h('p', { key: 'b' }, 'b'),
-        h('p', { key: 'c' }, 'c'),
+        h('p', { key: 'a' }, 'new-a'),
+        // h('p', { key: 'd' }, 'new-d'),
+        // h('p', { key: 'e' }, 'new-e'),
+        // h('p', { key: 'f' }, 'new-f'),
+        h('p', { key: 'b' }, 'new-b'),
+        h('p', { key: 'c' }, 'new-c'),
+        h('p', { key: 'f' }, 'new-f'),
       ])
 
       render(vnode1, app)
